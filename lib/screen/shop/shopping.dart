@@ -87,7 +87,8 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                             height: 140,
                             child: Image(
                                 image: NetworkImage(
-                                    shopList[index].image.toString())),
+                                    shopList[index].image.toString())
+                            ),
                           )),
                       const SizedBox(width: 10),
                       Expanded(

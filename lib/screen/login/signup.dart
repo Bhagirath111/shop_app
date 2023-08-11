@@ -35,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
           'email': emailController.text,
           'phoneNumber': '',
           'profileImage': '',
+          'dob': '',
           'createdAt': DateTime.now(),
           'userId': user.uid,
         });

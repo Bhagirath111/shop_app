@@ -86,6 +86,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             'email': '',
                             'name': '',
                             'phoneNumber': widget.phoneNumber,
+                            'profileImage': '',
+                            'dob': '',
                             'createdAt': DateTime.now(),
                             'userId': user.uid
                           });

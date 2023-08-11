@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_practice_app/button/round.dart';
@@ -8,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -22,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController updateNameController = TextEditingController();
   TextEditingController updateEmailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
 
   File? image;
   final picker = ImagePicker();
@@ -34,9 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      setState(() {
-
-      });
+      setState(() {});
     } else {
       print('No Image');
     }
@@ -55,8 +54,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         child: SizedBox(
-          height: 500,
+          height: Get.height,
           child: FutureBuilder(
               future: FirebaseFirestore.instance
                   .collection('data')
@@ -68,10 +68,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 return ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
                   children: snapshot.data!.docs.map((document) {
                     var profileImage = document['profileImage'];
                     var name = document['name'];
                     var email = document['email'];
+                    var dob = document['dob'];
                     var number = document['phoneNumber'];
                     return Center(
                       child: Padding(
@@ -87,10 +90,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     : FileImage(image!) as ImageProvider,
                                 radius: 50,
                                 child: Visibility(
-                                  visible:
-                                      image == null && profileImage == '',
-                                  child:
-                                      const Icon(Icons.add_a_photo_rounded),
+                                  visible: image == null && profileImage == '',
+                                  child: const Icon(Icons.add_a_photo_rounded),
                                 ),
                               ),
                             ),
@@ -125,6 +126,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       fontWeight: FontWeight.w500,
                                       color: Colors.black)),
                             ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: dobController,
+                              decoration:  InputDecoration(
+                                  icon: const Icon(Icons.calendar_month_outlined),
+                                  hintText: dob == '' ? 'Date of Birth' : dob.toString(),
+                                  ),
+                              readOnly: true,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime.now());
+                                if (pickedDate != null) {
+                                  String formattedDate =
+                                      DateFormat('dd-MM-yyyy')
+                                          .format(pickedDate);
+                                  setState(() {
+                                    dobController.text = formattedDate;
+                                  });
+                                }
+                              },
+                            ),
                             const SizedBox(height: 50),
                             RoundButton(
                                 title: 'Update',
@@ -148,16 +173,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             newUrl.toString() != null
                                                 ? newUrl.toString()
                                                 : profileImage,
-                                        'email': updateEmailController
-                                            .text
-                                            .isEmpty
-                                            ? email
-                                            : updateEmailController.text,
-                                        'name': updateNameController
-                                            .text
-                                            .isEmpty
-                                            ? name
-                                            : updateNameController.text,
+                                        'email':
+                                            updateEmailController.text.isEmpty
+                                                ? email
+                                                : updateEmailController.text,
+                                        'name':
+                                            updateNameController.text.isEmpty
+                                                ? name
+                                                : updateNameController.text,
                                       });
                                     });
                                   } else {
@@ -165,10 +188,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         .collection('data')
                                         .doc(user!.uid)
                                         .set({
-                                      'name':
-                                          updateNameController.text.isEmpty
-                                              ? name
-                                              : updateNameController.text,
+                                      'name': updateNameController.text.isEmpty
+                                          ? name
+                                          : updateNameController.text,
                                       'email':
                                           updateEmailController.text.isEmpty
                                               ? email
@@ -176,12 +198,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       'phoneNumber':
                                           phoneController.text.isEmpty
                                               ? number
-                                              : phoneController.text
-                                    }, SetOptions(merge: true)).then(
-                                            (value) => Get.snackbar('Success',
-                                                'Update Successfully'));
+                                              : phoneController.text,
+                                      'dob': dobController.text.isEmpty
+                                          ? dob
+                                          : dobController.text,
+                                    }, SetOptions(merge: true));
                                   }
-                                  Get.snackbar('Success', 'Update Successfully');
+                                  Get.snackbar(
+                                      'Success', 'Update Successfully');
                                   Get.to(const ShoppingScreen());
                                 })
                           ],

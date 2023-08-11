@@ -46,6 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+
   googleSignIn() async {
     print('google login method called');
     GoogleSignIn googleSignIn = GoogleSignIn();
@@ -66,6 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
           'email': user.email,
           'profileImage': user.photoURL,
           'phoneNumber': '',
+          'dob': '',
           'createdAt': DateTime.now(),
           'userId': user.uid,
         });
@@ -159,14 +161,14 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                InkWell(
-                  onTap: () {
-                    Get.to(const ForgotPasswordScreen());
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    InkWell(
+                      onTap : () {
+                        Get.to(const ForgotPasswordScreen());
+                      },
+                      child: const Text(
                         'Forgot Password',
                         textAlign: TextAlign.end,
                         style: TextStyle(
@@ -175,8 +177,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           color: Colors.blue,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 30),
                 RoundButton(

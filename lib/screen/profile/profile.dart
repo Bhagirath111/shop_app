@@ -39,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
           child: SizedBox(
             height: Get.height,
             child: FutureBuilder(
@@ -56,6 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     var profileImage = document['profileImage'];
                     var userName = document['name'];
                     var userEmail = document['email'];
+                    var userMobileNo = document['phoneNumber'];
                     return Center(
                       child: Column(
                         children: [
@@ -65,7 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 40,
                             child: Visibility(
                               visible: profileImage == '',
-                                child: const Icon(Icons.no_photography)),
+                                child: const Icon(Icons.no_photography)
+                            ),
                           ),
                           const SizedBox(height: 20),
                           Text(
@@ -75,7 +78,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontWeight: FontWeight.w400,
                                 color: Colors.black),
                           ),
-                          const SizedBox(height: 10),
+                          Text(
+                            '$userMobileNo',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black
+                            ),
+                          ),
                           Text(
                             '$userEmail',
                             style: const TextStyle(
@@ -127,13 +137,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             return SimpleDialog(
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 20),
                                                   child: Column(
                                                     children: [
                                                       const Text(
                                                         'Are You Sure!!! You Want To Sign out???',
                                                         style: TextStyle(
-                                                          fontSize: 25,
+                                                          fontSize: 23,
                                                           fontWeight: FontWeight.w400,
                                                           color: Colors.black
                                                         ),
